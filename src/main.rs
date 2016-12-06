@@ -21,8 +21,9 @@ mod day02;
 mod day03;
 mod day04;
 mod day05;
+mod day06;
 
-const LATEST: u8 = 5;
+const LATEST: u8 = 6;
 
 fn main() {
     let args = App::new("AdventOfCode")
@@ -63,6 +64,7 @@ fn run_one(day: u8) -> io::Result<Vec<String>> {
         3 => day03::main,
         4 => day04::main,
         5 => day05::main,
+        6 => day06::main,
         _ => panic!("not there yet"),
     };
 
