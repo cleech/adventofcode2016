@@ -11,9 +11,9 @@ use self::itertools::unfold;
 extern crate rustc_serialize;
 pub use self::rustc_serialize::hex::*;
 
-const DATA: &'static str = include_str!("input.txt");
+const DATA: &'static str = include_str!("day05.txt");
 
-pub fn main() -> Vec<String> {
+pub fn main() {
     let input = DATA.trim();
 
     let code = unfold(0, |mut idx| Some(find_interesting_hash(input, &mut idx, 5)))
@@ -44,7 +44,6 @@ pub fn main() -> Vec<String> {
         }
     }
     println!("\rday05 part2: {}", unsafe { String::from_utf8_unchecked(c2.clone()) });
-    vec![]
 }
 
 fn leading_zeros(buf: &[u8], count: usize) -> bool {
@@ -74,7 +73,7 @@ fn find_interesting_hash(key: &str, start: &mut u32, zeros: usize) -> String {
             leading_zeros(&output, zeros)
         })
         .unwrap();
-    println!("\t{}", start);
+    // println!("\t{}", start);
     *start += 1;
 
     output.to_hex()

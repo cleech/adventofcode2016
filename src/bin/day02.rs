@@ -1,4 +1,4 @@
-const DATA: &'static str = include_str!("input.txt");
+const DATA: &'static str = include_str!("day02.txt");
 
 extern crate nalgebra;
 use self::nalgebra::Vector2;
@@ -53,7 +53,7 @@ fn get_keycode2(start: Vector2<i32>, cmd: &str) -> Vector2<i32> {
         .unwrap()
 }
 
-pub fn main() -> Vec<String> {
+pub fn main() {
     let start = Vector2::new(1, 1); // '5'
     let code = DATA.lines()
         .scan(start, |state, line| {
@@ -73,8 +73,6 @@ pub fn main() -> Vec<String> {
         })
         .collect::<String>();
     println!("{:?}", code);
-
-    vec![]
 }
 
 #[cfg(test)]

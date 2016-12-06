@@ -1,4 +1,4 @@
-const DATA: &'static str = include_str!("input.txt");
+const DATA: &'static str = include_str!("day04.txt");
 
 use std::collections::HashMap;
 use std::cmp::Ordering;
@@ -12,7 +12,7 @@ fn frequency(s: &str) -> HashMap<char, i32> {
     h
 }
 
-pub fn main() -> Vec<String> {
+pub fn main() {
     let count = DATA.lines()
         .map(|s| s.rsplitn(2,'-').collect::<Vec<_>>())
         // ["sector[csum]", "enc-name"]
@@ -51,7 +51,6 @@ pub fn main() -> Vec<String> {
         // .count();
 
     println!("{}", count);
-    vec![count.to_string()]
 }
 
 fn shift_name(enc: &str, sector: u32) -> String {

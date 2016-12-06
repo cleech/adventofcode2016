@@ -1,10 +1,10 @@
-const DATA: &'static str = include_str!("input.txt");
+const DATA: &'static str = include_str!("day06.txt");
 const LEN: usize = 8;
 
 use std::collections::HashMap;
 use std::char;
 
-pub fn main() -> Vec<String> {
+pub fn main() {
     let mut hashvec = vec![];
     for _ in 0..LEN {
         hashvec.push(HashMap::new());
@@ -26,7 +26,6 @@ pub fn main() -> Vec<String> {
     }
     println!("{}", s1);
     println!("{}", s2);
-    vec![]
 }
 
 #[cfg(test)]

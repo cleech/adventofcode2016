@@ -1,11 +1,14 @@
-const DATA: &'static str = include_str!("input.txt");
+const DATA: &'static str = include_str!("day03.txt");
+
+#[macro_use]
+extern crate scan_fmt;
 
 fn is_possible(mut sides: [u32; 3]) -> bool {
     sides.sort();
     (sides[0] + sides[1]) > sides[2]
 }
 
-pub fn main() -> Vec<String> {
+pub fn main() {
     let count = DATA.lines()
         .filter(|line| {
             if let (Some(a), Some(b), Some(c)) = scan_fmt!(line, "{d} {d} {d}", u32, u32, u32) {
@@ -37,8 +40,6 @@ pub fn main() -> Vec<String> {
         .filter(|t| is_possible(*t))
         .count();
     println!("{}", count2);
-
-    vec![]
 }
 
 #[cfg(test)]

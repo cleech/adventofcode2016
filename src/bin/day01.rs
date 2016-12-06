@@ -1,4 +1,4 @@
-const DATA: &'static str = include_str!("input.txt");
+const DATA: &'static str = include_str!("day01.txt");
 
 extern crate nalgebra;
 use self::nalgebra::{Vector2, Matrix2};
@@ -22,7 +22,7 @@ const R: Matrix2<i32> = Matrix2 {
     m22: 0,
 };
 
-pub fn main() -> Vec<String> {
+pub fn main() {
     let mkitr = || {
         DATA.trim()
             .split(", ")
@@ -54,7 +54,8 @@ pub fn main() -> Vec<String> {
     let ebhq = mkitr().find(|&p| !visited.insert(p)).unwrap();
     let part2 = ebhq.x.abs() + ebhq.y.abs();
 
-    vec![part1.to_string(), part2.to_string()]
+    println!("{}", part1.to_string());
+    println!("{}", part2.to_string());
 }
 
 #[cfg(test)]

@@ -9,19 +9,13 @@
 
 use std::io;
 use std::time;
+use std::process::Command;
 
 #[macro_use]
 extern crate scan_fmt;
 
 extern crate clap;
 use clap::{Arg, App};
-
-mod day01;
-mod day02;
-mod day03;
-mod day04;
-mod day05;
-mod day06;
 
 const LATEST: u8 = 6;
 
@@ -57,14 +51,10 @@ fn try_main(day: u8) -> io::Result<()> {
 }
 
 fn run_one(day: u8) -> io::Result<Vec<String>> {
-    let f: fn() -> Vec<String> = match day {
+    // let f: fn() -> Vec<String> = match day {
+    let f = match day {
         0 => panic!("don't do that"),
-        1 => day01::main,
-        2 => day02::main,
-        3 => day03::main,
-        4 => day04::main,
-        5 => day05::main,
-        6 => day06::main,
+        1...6 => || { Command::new("cargo").args(&["run", "--release", "--bin", &format!("day{:02}", day)]).status(); vec![] },
         _ => panic!("not there yet"),
     };
 
