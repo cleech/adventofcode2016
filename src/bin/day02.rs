@@ -43,7 +43,7 @@ fn get_keycode2(start: Vector2<i32>, cmd: &str) -> Vector2<i32> {
         .scan(start, |state, d| {
             let next = *state + d;
             let key =
-                KEYPAD2.get(next.y as usize).and_then(|cs| cs.get(next.x as usize)).map(|o| *o);
+                KEYPAD2.get(next.y as usize).and_then(|cs| cs.get(next.x as usize)).cloned();
             if key.is_some() && key != Some('-') {
                 *state = next;
             }

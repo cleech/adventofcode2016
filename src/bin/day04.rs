@@ -24,7 +24,7 @@ pub fn main() {
         })
         // ("enc-name", "sector", "csum")
         .map(|t| {
-            let mut hm = frequency(&t.0);
+            let mut hm = frequency(t.0);
             hm.remove(&'-');
             let vec: Vec<(char, i32)> = hm.into_iter().collect();
             let mut vec = vec.into_iter().map(|(c,n)| (n,c)).collect::<Vec<_>>();
@@ -43,7 +43,7 @@ pub fn main() {
         .filter(|t| t.0)
         .inspect(|t| {
             let sector = t.2.parse::<u32>().unwrap();
-            let room = shift_name(&t.1, sector);
+            let room = shift_name(t.1, sector);
             println!("{} : {}", room, sector);
         })
         .map(|t| t.2.parse::<u32>().unwrap())

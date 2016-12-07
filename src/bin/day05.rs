@@ -53,20 +53,17 @@ pub fn main() {
                 let (idx, hash) = hashes.next().unwrap();
                 let mut ch = hash.bytes().skip(5);
                 let n = ch.next().unwrap().to_digit_dumb().unwrap() as usize;
-                if n > 7 {
-                    continue;
-                }
                 let b = ch.next().unwrap();
 
                 let mut code2 = code2.lock().unwrap();
                 // locked section from here to end of loop
-                if code2.0[n] > idx {
-                    code2.0[n] = idx;
+                if n < 8 && idx < code2.0[n] {
                     code2.1[n] = b;
+                    code2.0[n] = idx;
                     print!("\rday05 part2: {}", unsafe { String::from_utf8_unchecked(code2.1.clone()) });
                     io::stdout().flush().unwrap();
                 }
-                if code2.0.iter().all(|n| *n < idx) {
+                if code2.0.iter().all(|n| *n <= idx) {
                     break;
                 }
             }
@@ -104,8 +101,9 @@ fn find_interesting_hash(key: &str, start: &mut u32, stride: u32) -> (u32, Strin
     *start = (*start..).step_by(stride)
         .find(|n| {
             md5.reset();
+            md5.input(key.as_bytes());
             buf.clear();
-            write!(&mut buf, "{}{}", key, n).unwrap();
+            write!(&mut buf, "{}", n).unwrap();
             md5.input(&buf);
             md5.result(&mut output);
             leading_zeros(&output)
