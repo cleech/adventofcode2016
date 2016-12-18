@@ -1,0 +1,15 @@
+#!/bin/bash
+
+while getopts ":d:" opt; do
+  case $opt in
+    d) day=$OPTARG ;;
+  esac
+done
+
+if [ -z $day ]; then
+  cargo run --release --bin adventofcode2016 -- $@
+else
+  cargo build --release --bin `printf "day%02d" $day`
+  perf stat ./target/release/day$(printf "%02d" $day)
+fi
+
