@@ -6,8 +6,7 @@ use std::cmp::Ordering;
 fn frequency(s: &str) -> HashMap<char, i32> {
     let mut h = HashMap::new();
     for ch in s.chars() {
-        let counter = h.entry(ch).or_insert(0);
-        *counter += 1;
+        *h.entry(ch).or_insert(0) += 1;
     }
     h
 }
@@ -26,17 +25,16 @@ pub fn main() {
         .map(|t| {
             let mut hm = frequency(t.0);
             hm.remove(&'-');
-            let vec: Vec<(char, i32)> = hm.into_iter().collect();
-            let mut vec = vec.into_iter().map(|(c,n)| (n,c)).collect::<Vec<_>>();
+            let mut vec: Vec<(char, i32)> = hm.into_iter().collect();
             vec.sort_by(|a, b| {
-                let rc = b.0.cmp(&a.0);
+                let rc = b.1.cmp(&a.1);
                 if rc == Ordering::Equal {
-                    a.1.cmp(&b.1)
+                    a.0.cmp(&b.0)
                 } else {
                     rc
                 }
             });
-            let cs = vec.into_iter().map(|t| t.1).collect::<String>()[0 .. 5].to_string();
+            let cs = vec.into_iter().map(|t| t.0).collect::<String>()[0 .. 5].to_string();
             (cs == t.2, t.0, t.1, t.2, cs)
         })
         // .inspect(|x| println!("{:?}", x))

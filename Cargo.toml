@@ -10,13 +10,14 @@ rust-crypto = "~0.2.34"
 #permutohedron = "~0.2.0"
 clap = "~2.13"
 #serde_json = "~0.8.0"
-clippy = { version="*", optional = true }
 nalgebra = "~0.10"
 rustc-serialize = "~0.3"
 arrayvec = "~0.3"
 num_cpus = "~1.0"
 fnv = "~1.0"
 nom = "~2.0"
+lazy_static = "0.1.*"
+num = "0.1.36"
 
 [features]
 default=[]

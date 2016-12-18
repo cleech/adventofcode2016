@@ -3,7 +3,6 @@
 use std::io;
 use std::io::Write;
 use std::thread;
-use std::sync::{Arc, Mutex};
 
 extern crate crypto;
 use crypto::digest::Digest;
@@ -20,6 +19,9 @@ use arrayvec::ArrayVec;
 
 extern crate num_cpus;
 
+use std::sync::mpsc::{Sender, Receiver};
+use std::sync::mpsc;
+
 const DATA: &'static str = include_str!("day05.txt");
 
 pub fn main() {
@@ -28,7 +30,7 @@ pub fn main() {
     let code = unfold(0, |mut idx| {
             Some(find_interesting_hash(input, &mut idx, 1))
         })
-        .map(|(_, hash)| hash.chars().skip(5).next().unwrap())
+        .map(|(_, hash)| hash.chars().nth(6).unwrap())
         .take(8)
         .collect::<String>();
 
@@ -37,42 +39,51 @@ pub fn main() {
     print!("day05 part2: --------");
     io::stdout().flush().unwrap();
 
-    let code2 = Arc::new(Mutex::new((vec![u32::max_value(); 8], vec![b'-'; 8])));
+    let mut code2 = (vec![u32::max_value(); 8], vec![b'-'; 8]);
     let cpus = num_cpus::get();
     let mut threads = Vec::with_capacity(cpus);
 
+    let (tx, rx): (Sender<_>, Receiver<_>) = mpsc::channel();
+    // let mut ctrls = Vec::with_capacity(cpus);
+
     for cpu in 0..cpus {
-        let code2 = code2.clone();
+        let thread_tx = tx.clone();
+        // let (ctrl, thread_rx) = mpsc::channel();
 
         let tid = thread::spawn(move || {
             let mut hashes = unfold(cpu as u32, |mut idx| {
                 Some(find_interesting_hash(input, &mut idx, cpus as u32))
             });
-
             loop {
                 let (idx, hash) = hashes.next().unwrap();
                 let mut ch = hash.bytes().skip(5);
                 let n = ch.next().unwrap().to_digit_dumb().unwrap() as usize;
                 let b = ch.next().unwrap();
 
-                let mut code2 = code2.lock().unwrap();
-                // locked section from here to end of loop
-                if n < 8 && idx < code2.0[n] {
-                    code2.1[n] = b;
-                    code2.0[n] = idx;
-                    print!("\rday05 part2: {}", unsafe { String::from_utf8_unchecked(code2.1.clone()) });
-                    io::stdout().flush().unwrap();
-                }
-                if code2.0.iter().all(|n| *n <= idx) {
-                    break;
-                }
+                thread_tx.send((n, b, idx)).unwrap();
+                // if thread_rx.try_recv().is_ok() {
+                //     break;
+                // }
             }
         });
         threads.push(tid);
+        // ctrls.push(ctrl);
     }
-    for tid in threads { let _ = tid.join(); }
 
-    let code2 = code2.lock().unwrap();
+    loop {
+        let (n, b, idx) = rx.recv().unwrap();
+        if n < 8 && idx < code2.0[n] {
+            code2.1[n] = b;
+            code2.0[n] = idx;
+            print!("\rday05 part2: {}", unsafe { String::from_utf8_unchecked(code2.1.clone()) });
+            io::stdout().flush().unwrap();
+        }
+        if code2.0.iter().all(|n| *n <= idx) {
+            break;
+        }
+    }
+    // for ctrl in ctrls { let _ = ctrl.send(0); }
+    // for tid in threads { let _ = tid.join(); }
     println!("\rday05 part2: {}", unsafe { String::from_utf8_unchecked(code2.1.clone()) });
 }
 
@@ -101,7 +112,7 @@ fn find_interesting_hash(key: &str, start: &mut u32, stride: u32) -> (u32, Strin
     *start = (*start..).step_by(stride)
         .find(|n| {
             md5.reset();
-            md5.input(key.as_bytes());
+            md5.input_str(key);
             buf.clear();
             write!(&mut buf, "{}", n).unwrap();
             md5.input(&buf);

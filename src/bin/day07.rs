@@ -39,7 +39,7 @@ pub fn main() {
             hypernet.any(|hn| {
                 hn.as_bytes().windows(3).any(|w| {
                     let bab: &[u8] = &[w[1], w[0], w[1]];
-                    aba(&w) && abas.contains(&bab)
+                    aba(w) && abas.contains(&bab)
                 })
             })
         })

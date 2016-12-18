@@ -18,8 +18,8 @@ pub fn main() {
     }
     let mut s1 = String::new();
     let mut s2 = String::new();
-    for n in 0..LEN {
-        let mut v = hashvec[n].iter().collect::<Vec<_>>();
+    for map in hashvec {
+        let mut v = map.iter().collect::<Vec<_>>();
         v.sort_by(|a, b| b.1.cmp(a.1));
         s1.push(*v[0].0);
         s2.push(*v[v.len() - 1].0);

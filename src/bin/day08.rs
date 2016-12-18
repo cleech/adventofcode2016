@@ -58,30 +58,30 @@ impl FromStr for Cmnd {
 struct Screen ([[bool; WIDTH]; HEIGHT]);
 
 impl Screen {
-    fn rect(self, x: usize, y: usize) -> Screen {
-        let mut s = self.clone();
+    fn rect(&mut self, x: usize, y: usize) {
         for iy in 0..y {
             for ix in 0..x {
-                s.0[iy][ix] = true;
+                self.0[iy][ix] = true;
             }
         }
-        s
     }
-    fn rrow(self, y: usize, n: usize) -> Screen {
-        let mut s = self.clone();
+    fn rrow(&mut self, y: usize, n: usize) {
+        let mut tmp = self.0[y];
         for i in 0..WIDTH {
-            s.0[y][i] = self.0[y][(i + WIDTH - n) % WIDTH];
+            tmp[i] = self.0[y][(i + WIDTH - n) % WIDTH];
         }
-        s
+        self.0[y] = tmp;
     }
-    fn rcol(self, x: usize, n: usize) -> Screen {
-        let mut s = self.clone();
+    fn rcol(&mut self, x: usize, n: usize) {
+        let mut tmp = [false; HEIGHT];
         for i in 0..HEIGHT {
-            s.0[i][x] = self.0[(i + HEIGHT - n) % HEIGHT][x];
+            tmp[i] = self.0[i][x];
         }
-        s
+        for i in 0..HEIGHT {
+            self.0[i][x] = tmp[(i + HEIGHT - n) % HEIGHT];
+        }
     }
-    fn cmnd(self, cmnd: Cmnd) -> Screen {
+    fn cmnd(&mut self, cmnd: Cmnd) {
         match cmnd {
             Rect {x, y} => self.rect(x, y),
             RRow {y, n} => self.rrow(y, n),
@@ -106,10 +106,11 @@ impl fmt::Display for Screen {
 fn main () {
     let mut s = Screen([[false; WIDTH]; HEIGHT]);
     for cmnd in DATA.lines().map(Cmnd::from_str) {
-        println!("{:?}", cmnd);
-        s = s.cmnd(cmnd.unwrap());
-        println!("{}", s);
+        // println!("{:?}", cmnd);
+        s.cmnd(cmnd.unwrap());
+        // println!("{}", s);
     }
     let count = s.0.iter().flat_map(|row| row.iter()).filter(|cel| **cel).count();
-    println!("{}", count)
+    println!("{}", count);
+    println!("{}", s);
 }

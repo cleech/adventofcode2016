@@ -68,4 +68,7 @@ fn main () {
     let input = DATA.trim().as_bytes();
     println!("{:?}", uncompress_all(input));
     println!("{:?}", uncompress_all_r(input));
+    // this sort of input is not handled, but not needed for the puzzle
+    // println!("{:?}", uncompress_all_r(b"(6x2)A(1x2)B"));
 }
+
