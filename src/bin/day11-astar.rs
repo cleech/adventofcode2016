@@ -5,8 +5,6 @@ use std::fmt::Display;
 use std::collections::HashMap;
 use std::collections::hash_map::Entry;
 use std::collections::BinaryHeap;
-extern crate arrayvec;
-use arrayvec::ArrayVec;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 struct Stuff(usize, usize, char);
@@ -15,7 +13,7 @@ struct Stuff(usize, usize, char);
 struct WorldState {
     moves: usize,
     elevator: usize,
-    stuff: ArrayVec<[Stuff; 8]>,
+    stuff: Vec<Stuff>,
     cost: usize,
 }
 
@@ -53,7 +51,7 @@ impl PartialOrd for WorldState {
     }
 }
 
-fn cost_estimate(stuff: &ArrayVec<[Stuff; 8]>) -> usize {
+fn cost_estimate(stuff: &[Stuff]) -> usize {
     stuff.iter()
         .map(|&Stuff(m, g, _)| if m == g {
             (3 - m)
@@ -68,15 +66,15 @@ impl WorldState {
         WorldState {
             moves: 0,
             elevator: 0,
-            stuff: ArrayVec::new(),
+            stuff: Vec::with_capacity(8),
             cost: 0,
         }
     }
 
-    fn key(&self) -> ArrayVec<[usize; 16]> {
-        let mut key = ArrayVec::new();
+    fn key(&self) -> Vec<usize> {
+        let mut key = Vec::with_capacity(16);
         key.push(self.elevator);
-        for &Stuff(m, g, _) in self.stuff.iter() {
+        for &Stuff(m, g, _) in &self.stuff {
             key.push(m);
             key.push(g);
         }
@@ -96,8 +94,8 @@ impl WorldState {
         })
     }
 
-    fn adjacent_floors(&self) -> ArrayVec<[usize; 2]> {
-        let mut av = ArrayVec::new();
+    fn adjacent_floors(&self) -> Vec<usize> {
+        let mut av = Vec::with_capacity(2);
         match self.elevator {
             0 => {
                 av.push(1);
